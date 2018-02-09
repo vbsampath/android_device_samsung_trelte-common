@@ -1,0 +1,31 @@
+#============= bootanim ==============
+#allow bootanim debugfs:file { open write };
+
+#============= cpboot-daemon ==============
+allow cpboot-daemon sysfs:dir { open read };
+
+#============= init ==============
+allow init debugfs:file write;
+
+#============= mediaserver ==============
+allow mediaserver system_data_file:file open;
+
+#============= sensorhubservice ==============
+#allow sensorhubservice default_android_service:service_manager add;
+
+#============= system_server ==============
+#allow system_server device:chr_file { ioctl open read };
+
+#============= vcsFPService ==============
+allow vcsFPService ion_device:chr_file { ioctl open read write };
+allow vcsFPService secmem_device:chr_file { ioctl open read write };
+allow vcsFPService tee:unix_stream_socket connectto;
+allow vcsFPService validity_device:dir { add_name write };
+allow vcsFPService validity_device:fifo_file { create open write };
+allow vcsFPService validity_device:file { create lock open read write };
+allow vcsFPService vcs_data_file:file { getattr lock open read write };
+allow vcsFPService vcs_exec:file { entrypoint getattr read };
+allow vcsFPService vfsspi_device:chr_file { ioctl open read write };
+
+#============= zygote ==============
+#allow zygote debugfs:file { getattr open write };
