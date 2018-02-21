@@ -184,6 +184,13 @@ const struct route_config camcorder_speaker = {
     "device-back-mic",
 };
 
+const struct route_config camcorder_headset = {
+    "media-headphones",
+    "device-headphones",
+    "media-second-mic",
+    "device-back-mic",
+};
+
 const struct route_config camcorder_headphones = {
     "media-headphones",
     "device-headphones",
@@ -194,14 +201,14 @@ const struct route_config camcorder_headphones = {
 const struct route_config voice_rec_speaker = {
     "voice-rec-speaker",
     "device-speaker",
-    "voice-rec-two-mic",
+    "voice-rec-mic",
     "device-builtin-mic",
 };
 
 const struct route_config voice_rec_headphones = {
     "voice-rec-headphones",
     "device-headphones",
-    "voice-rec-two-mic",
+    "voice-rec-mic",
     "device-builtin-mic",
 };
 
@@ -215,22 +222,22 @@ const struct route_config voice_rec_headset = {
 const struct route_config communication_speaker = {
     "communication-speaker",
     "device-speaker",
-    "communication-speaker-two-mic",
-    "device-two-mic",
+    "communication-speaker-mic",
+    "device-builtin-mic",
 };
 
 const struct route_config communication_earpiece = {
     "communication-earpiece",
     "device-earpiece",
-    "communication-earpiece-two-mic",
-    "device-two-mic",
+    "communication-earpiece-mic",
+    "device-builtin-mic",
 };
 
 const struct route_config communication_headphones = {
     "communication-headphones",
     "device-headphones",
-    "communication-earpiece-two-mic",
-    "device-two-mic",
+    "communication-earpiece-mic",
+    "device-builtin-mic",
 };
 
 const struct route_config communication_headset = {
@@ -243,8 +250,8 @@ const struct route_config communication_headset = {
 const struct route_config speaker_and_headphones = {
     "speaker-and-headphones",
     "device-speaker",
-    "scenario-two-mic-speaker-default",
-    "device-two-mic",
+    "scenario-builtin-mic-default",
+    "device-builtin-mic",
 };
 
 const struct route_config bt_sco_carkit = {
@@ -277,7 +284,7 @@ const struct route_config * const route_configs[IN_SOURCE_TAB_SIZE]
     {   /* IN_SOURCE_CAMCORDER */
         &camcorder_speaker,         /* OUT_DEVICE_SPEAKER */
         &none,                      /* OUT_DEVICE_EARPIECE */
-        &camcorder_headphones,      /* OUT_DEVICE_HEADSET */
+        &camcorder_headset,      /* OUT_DEVICE_HEADSET */
         &camcorder_headphones,      /* OUT_DEVICE_HEADPHONES */
         &media_bt_sco,              /* OUT_DEVICE_BT_SCO */
         &media_bt_sco_headset_out,  /* OUT_DEVICE_BT_SCO_HEADSET_OUT */
