@@ -29,3 +29,8 @@ allow vcsFPService vfsspi_device:chr_file { ioctl open read write };
 
 #============= zygote ==============
 #allow zygote debugfs:file { getattr open write };
+
+allow vcsFPService vcs_device:chr_file { ioctl open read write };
+allow vcsFPService vcs_device:dir { add_name write };
+allow vcsFPService vcs_device:fifo_file { create open write };
+allow vcsFPService vcs_device:file { create lock open read write };

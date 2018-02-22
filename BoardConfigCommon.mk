@@ -33,15 +33,6 @@ BOARD_USERDATAIMAGE_PARTITION_SIZE := 27028094976
 # blockdev --getbsz /dev/block/mmcblk0p9
 BOARD_FLASH_BLOCK_SIZE := 4096
 
-# ValidityService
-BOARD_USES_VALIDITY := true
-
-# PowerHAL
-TARGET_POWERHAL_VARIANT := samsung
-
-# Sensors
-TARGET_NO_SENSOR_PERMISSION_CHECK := true
-
 # Kernel
 #TARGET_KERNEL_SOURCE := kernel/samsung/trelte
 TARGET_KERNEL_SOURCE := kernel/samsung/exynos5433
@@ -66,6 +57,22 @@ BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := $(LOCAL_PATH)/bluetooth
 # Camera
 BOARD_USE_SAMSUNG_CAMERAFORMAT_NV21 := true
 TARGET_HAS_LEGACY_CAMERA_HAL1 := true
+
+# Charger/Healthd
+BOARD_CHARGING_MODE_BOOTING_LPM := /sys/class/power_supply/battery/batt_lp_charging
+BOARD_CHARGER_ENABLE_SUSPEND := true
+BOARD_CHARGER_SHOW_PERCENTAGE := true
+RED_LED_PATH := "/sys/class/leds/led_r/brightness"
+GREEN_LED_PATH := "/sys/class/leds/led_g/brightness"
+BLUE_LED_PATH := "/sys/class/leds/led_b/brightness"
+BACKLIGHT_PATH := "/sys/class/backlight/panel/brightness"
+CHARGING_ENABLED_PATH := /sys/class/power_supply/battery/batt_lp_charging
+
+# FIMG2D
+BOARD_USES_SKIA_FIMGAPI := true
+
+BOARD_USES_NEON_BLITANTIH := true
+BOARD_USES_FIMGAPI_V4L2 := false
 
 # Graphics
 USE_OPENGL_RENDERER := true
@@ -92,18 +99,10 @@ NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 # HWCServices
 BOARD_USES_HWC_SERVICES := true
 
-# Virtual Display
-BOARD_USES_VIRTUAL_DISPLAY := true
-
 # HDMI
 BOARD_USES_NEW_HDMI := true
 BOARD_USES_GSC_VIDEO := true
 BOARD_USES_CEC := true
-# FIMG2D
-BOARD_USES_SKIA_FIMGAPI := true
-
-BOARD_USES_NEON_BLITANTIH := true
-BOARD_USES_FIMGAPI_V4L2 := false
 
 # (G)SCALER
 BOARD_USES_SCALER := true
@@ -136,11 +135,23 @@ BOARD_USE_VP8ENC_SUPPORT := true
 TARGET_SPECIFIC_HEADER_PATH := $(LOCAL_PATH)/include
 
 # Hardware
-#BOARD_HARDWARE_CLASS += device/samsung/trelte-common/cmhw
-#BOARD_HARDWARE_CLASS += hardware/samsung/cmhw
-
 BOARD_HARDWARE_CLASS := $(LOCAL_PATH)/cmhw
 BOARD_HARDWARE_CLASS += hardware/samsung/cmhw
+
+# RIL
+BOARD_VENDOR := samsung
+BOARD_PROVIDES_LIBRIL := true
+#BOARD_MODEM_NEEDS_VIDEO_CALL_FIELD := true
+TARGET_IGNORE_RO_BOOT_REVISION := true
+
+# RIL.java overwrite
+BOARD_RIL_CLASS := ../../../$(LOCAL_PATH)/ril
+
+# Virtual Display
+BOARD_USES_VIRTUAL_DISPLAY := true
+
+# WFD
+BOARD_USES_WFD := true
 
 # WIFI
 BOARD_WPA_SUPPLICANT_DRIVER      := NL80211
@@ -155,33 +166,12 @@ WIFI_DRIVER_NVRAM_PATH           := "/etc/wifi/nvram_net.txt"
 WIFI_DRIVER_FW_PATH_STA          := "/etc/wifi/bcmdhd_sta.bin"
 WIFI_DRIVER_FW_PATH_AP           := "/etc/wifi/bcmdhd_apsta.bin"
 
-# Webkit
-#ENABLE_WEBGL := true
-
-# WFD
-BOARD_USES_WFD := true
-
 # Wifi Macloader
 BOARD_HAVE_SAMSUNG_WIFI := true
 
-# Charger/Healthd
-BOARD_CHARGING_MODE_BOOTING_LPM := /sys/class/power_supply/battery/batt_lp_charging
-BOARD_CHARGER_ENABLE_SUSPEND := true
-BOARD_CHARGER_SHOW_PERCENTAGE := true
-RED_LED_PATH := "/sys/class/leds/led_r/brightness"
-GREEN_LED_PATH := "/sys/class/leds/led_g/brightness"
-BLUE_LED_PATH := "/sys/class/leds/led_b/brightness"
-BACKLIGHT_PATH := "/sys/class/backlight/panel/brightness"
-CHARGING_ENABLED_PATH := /sys/class/power_supply/battery/batt_lp_charging
 
-# RIL
-BOARD_VENDOR := samsung
-BOARD_PROVIDES_LIBRIL := true
-#BOARD_MODEM_NEEDS_VIDEO_CALL_FIELD := true
-TARGET_IGNORE_RO_BOOT_REVISION := true
 
-# RIL.java overwrite
-BOARD_RIL_CLASS := ../../../$(LOCAL_PATH)/ril
+
 
 # Recovery
 TARGET_RECOVERY_FSTAB := $(LOCAL_PATH)/ramdisk/fstab.universal5433
@@ -205,3 +195,12 @@ TARGET_BOOTANIMATION_TEXTURE_CACHE := true
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 
 #TARGET_PROVIDES_LIBLIGHT := false
+
+# ValidityService
+BOARD_USES_VALIDITY := true
+
+# PowerHAL
+TARGET_POWERHAL_VARIANT := samsung
+
+# Sensors
+TARGET_NO_SENSOR_PERMISSION_CHECK := true

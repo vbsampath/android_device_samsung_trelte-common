@@ -2,16 +2,59 @@ DEVICE_PACKAGE_OVERLAYS += device/samsung/trelte-common/overlay
 
 LOCAL_PATH := device/samsung/trelte-common
 
+# Audio
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/audio/audio_effects.conf:system/etc/audio_effects.conf \
+    $(LOCAL_PATH)/configs/audio/audio_policy.conf:system/etc/audio_policy.conf
 
-# Ramdisk
 PRODUCT_PACKAGES += \
-    fstab.universal5433 \
-    init.power.rc \
-    init.samsung.rc \
-    init.wifi.rc \
-    init.universal5433.rc \
-    init.universal5433.usb.rc \
-    ueventd.universal5433.rc
+    audio.a2dp.default \
+    audio.usb.default \
+    audio.r_submix.default \
+    audio.primary.universal5433 \
+    libtinycompress
+
+# Camera
+PRODUCT_PACKAGES += \
+    camera.universal5433
+
+PRODUCT_PACKAGES += \
+    Snap
+
+# Display
+PRODUCT_AAPT_CONFIG := normal
+PRODUCT_AAPT_PREF_CONFIG := 560dpi
+PRODUCT_AAPT_PREBUILT_DPI := xxxhdpi xxhdpi xhdpi hdpi
+
+PRODUCT_PACKAGES += \
+    gralloc.exynos5
+
+PRODUCT_PACKAGES += \
+    libion \
+    libfimg
+
+PRODUCT_PACKAGES += \
+    libstlport \
+	libshim_gpsd
+
+# Fingerprint
+PRODUCT_PACKAGES += \
+    fingerprintd \
+    fingerprint.exynos5\
+    validityService	
+
+# Gps
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/gps/gps.conf:system/etc/gps.conf \
+    $(LOCAL_PATH)/configs/gps/gps.xml:system/etc/gps.xml
+	
+# Lights
+PRODUCT_PACKAGES += \
+    lights.universal5433		
+	
+# Hardware/Samsung/AdvancedDisplay (MDNIE)
+#PRODUCT_PACKAGES += \
+    #AdvancedDisplay
 
 # Permissions
 PRODUCT_COPY_FILES += \
@@ -20,6 +63,7 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.camera.flash-autofocus.xml:system/etc/permissions/android.hardware.camera.flash-autofocus.xml \
     frameworks/native/data/etc/android.hardware.camera.front.xml:system/etc/permissions/android.hardware.camera.front.xml \
     frameworks/native/data/etc/android.hardware.consumerir.xml:system/etc/permissions/android.hardware.consumerir.xml \
+	frameworks/native/data/etc/android.hardware.fingerprint.xml:system/etc/permissions/android.hardware.fingerprint.xml \
     frameworks/native/data/etc/android.hardware.location.gps.xml:system/etc/permissions/android.hardware.location.gps.xml \
     frameworks/native/data/etc/android.hardware.nfc.hce.xml:system/etc/permissions/android.hardware.nfc.hce.xml \
     frameworks/native/data/etc/android.hardware.nfc.xml:system/etc/permissions/android.hardware.nfc.xml \
@@ -43,35 +87,7 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/com.nxp.mifare.xml:system/etc/permissions/com.nxp.mifare.xml \
 	frameworks/native/data/etc/android.hardware.fingerprint.xml:system/etc/permissions/android.hardware.fingerprint.xml \
     frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml
-
-	#frameworks/native/data/etc/android.hardware.fingerprint.xml:system/etc/permissions/android.hardware.fingerprint.xml \
 	
-# Display
-PRODUCT_AAPT_CONFIG := normal
-PRODUCT_AAPT_PREF_CONFIG := 560dpi
-PRODUCT_AAPT_PREBUILT_DPI := xxxhdpi xxhdpi xhdpi hdpi
-
-PRODUCT_PACKAGES += \
-    gralloc.exynos5
-
-PRODUCT_PACKAGES += \
-    libion \
-    libfimg
-
-PRODUCT_PACKAGES += \
-    libstlport \
-	libshim_gpsd
-
-# Fingerprint
-PRODUCT_PACKAGES += \
-    fingerprintd \
-    fingerprint.exynos5 \
-    validityService
-
-# Hardware/Samsung/AdvancedDisplay (MDNIE)
-#PRODUCT_PACKAGES += \
-    #AdvancedDisplay
-
 # Radio
 PRODUCT_PACKAGES += \
     libxml2 \
@@ -82,7 +98,20 @@ PRODUCT_PACKAGES += \
     libsecril-client-sap \
 	modemloader
 
+# Ramdisk
+PRODUCT_PACKAGES += \
+    fstab.universal5433 \
+    init.power.rc \
+    init.samsung.rc \
+    init.wifi.rc \
+    init.universal5433.rc \
+    init.universal5433.usb.rc \
+    ueventd.universal5433.rc	
 
+# Samsung Doze
+PRODUCT_PACKAGES += \
+    SamsungDoze
+	
 # Wifi
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/wifi/p2p_supplicant_overlay.conf:system/etc/wifi/p2p_supplicant_overlay.conf \
@@ -103,6 +132,38 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     wpa_supplicant.conf
 
+
+# OMX/Media
+PRODUCT_COPY_FILES += \
+    frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
+    frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
+    frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml  \
+    $(LOCAL_PATH)/configs/media/media_codecs.xml:system/etc/media_codecs.xml \
+    $(LOCAL_PATH)/configs/media/media_profiles.xml:system/etc/media_profiles.xml
+
+
+
+
+
+
+
+
+
+# Touchscreen
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/keylayout/gpio_keys_8.kl:/system/usr/keylayout/gpio_keys_8.kl \
+    $(LOCAL_PATH)/configs/keylayout/sec_touchkey.kl:/system/usr/keylayout/sec_touchkey.kl \
+    $(LOCAL_PATH)/configs/keylayout/sec_e-pen.kl:/system/usr/keylayout/sec_e-pen.kl
+
+# Power
+PRODUCT_PACKAGES += \
+    power.universal5433	
+	
+# Stylus
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/idc/ft5x06_ts.idc:/system/usr/idc/ft5x06_ts.idc \
+    $(LOCAL_PATH)/configs/idc/sec_e-pen.idc:/system/usr/idc/sec_e-pen.idc
+
 # Nfc
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/nfc/libnfc-sec-hal.conf:system/etc/libnfc-sec-hal.conf \
@@ -113,58 +174,7 @@ PRODUCT_PACKAGES += \
     com.android.nfc_extras \
     NfcNci \
     Tag
-
-# Audio
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/audio/audio_effects.conf:system/etc/audio_effects.conf \
-    $(LOCAL_PATH)/configs/audio/audio_policy.conf:system/etc/audio_policy.conf
-
-PRODUCT_PACKAGES += \
-    audio.a2dp.default \
-    audio.usb.default \
-    audio.r_submix.default \
-    audio.primary.universal5433 \
-    libtinycompress
-
-# OMX/Media
-PRODUCT_COPY_FILES += \
-    frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
-    frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
-    frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml  \
-    $(LOCAL_PATH)/configs/media/media_codecs.xml:system/etc/media_codecs.xml \
-    $(LOCAL_PATH)/configs/media/media_profiles.xml:system/etc/media_profiles.xml
-
-# Power
-PRODUCT_PACKAGES += \
-    power.universal5433
-
-# Lights
-PRODUCT_PACKAGES += \
-    lights.universal5433
-
-# Gps
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/gps/gps.conf:system/etc/gps.conf \
-    $(LOCAL_PATH)/configs/gps/gps.xml:system/etc/gps.xml
-
-
-# Camera
-PRODUCT_PACKAGES += \
-    camera.universal5433
-
-PRODUCT_PACKAGES += \
-    Snap
-
-# Touchscreen
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/keylayout/gpio_keys_8.kl:/system/usr/keylayout/gpio_keys_8.kl \
-    $(LOCAL_PATH)/configs/keylayout/sec_touchkey.kl:/system/usr/keylayout/sec_touchkey.kl
-
-# Stylus
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/idc/ft5x06_ts.idc:/system/usr/idc/ft5x06_ts.idc \
-    $(LOCAL_PATH)/configs/idc/sec_e-pen.idc:/system/usr/idc/sec_e-pen.idc
-
+	
 # Offmode charger
 # Use cm images if available, aosp ones otherwise
 PRODUCT_PACKAGES += \
@@ -176,11 +186,14 @@ PRODUCT_PACKAGES += \
     SamsungServiceMode
 
 # Default props
-ADDITIONAL_DEFAULT_PROPERTIES += \
-    ro.debug_level=0x4948
+#ADDITIONAL_DEFAULT_PROPERTIES += \
+#    ro.debug_level=0x4948
 
 # System properties
 -include $(LOCAL_PATH)/system_prop.mk
+
+# TEMP ADB
+ADDITIONAL_DEFAULT_PROPERTIES += ro.adb.secure=0
 
 # Call Samsung LSI board support package
 $(call inherit-product, hardware/samsung_slsi-cm/exynos5/exynos5.mk)

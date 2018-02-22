@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "FingerprintHal_Exynos5"
+#define LOG_TAG "FingerprintHal_universal5422"
 #define LOG_NDEBUG 1
 
 #include <errno.h>
@@ -30,7 +30,7 @@
 #include <hardware/fingerprint.h>
 #include <unistd.h>
 
-#include "fp_exynos5.h"
+#include "fp_k3gxx.h"
 
 #define MAX_COMM_CHARS 128
 #define MAX_NUM_FINGERS 5
@@ -74,6 +74,7 @@ static int initService(vcs_fingerprint_device_t* vdev) {
     uint8_t command[1] = {CALL_INITSERVICE};
 
     ret = sendcommand(vdev, command, 1);
+    vdev->authenticator_id = getfingermask(vdev);
     vdev->init = true;
     return ret;
 }
@@ -189,6 +190,7 @@ static uint64_t fingerprint_get_auth_id(struct fingerprint_device* device) {
     ALOGV("----------------> %s ----------------->", __FUNCTION__);
     uint64_t authenticator_id = 0;
     pthread_mutex_lock(&vdev->lock);
+    vdev->authenticator_id = getfingermask(vdev);
     authenticator_id = vdev->authenticator_id;
     pthread_mutex_unlock(&vdev->lock);
 
@@ -264,7 +266,7 @@ static int fingerprint_enroll(struct fingerprint_device *device,
     vdev->listener.state = STATE_ENROLL;
 
     fingermask = getfingermask(vdev);
-    ALOGI("fingerprint_enumerate: fingermask=%d", fingermask);
+    ALOGI("fingerprint_enroll: fingermask=%d", fingermask);
     for (idx = 1; idx <= MAX_NUM_FINGERS; idx++)
         if (!((fingermask >> idx) & 1))
             break;
@@ -279,6 +281,8 @@ static int fingerprint_enroll(struct fingerprint_device *device,
     if (ret == 1) {
         ret = 0;
     }
+
+    vdev->authenticator_id = getfingermask(vdev);
 
     return ret;
 }
@@ -369,12 +373,12 @@ static int fingerprint_remove(struct fingerprint_device *device,
     if (fid == 0) {
         // Delete all fingerprints
         command[2] = 21;
-        int fingermask = getfingermask(vdev);
         pthread_mutex_lock(&vdev->lock);
         ret = sendcommand(vdev, command, 3);
         pthread_mutex_unlock(&vdev->lock);
         if (ret == 0){
             pthread_mutex_lock(&vdev->lock);
+            int fingermask = getfingermask(vdev);
             pthread_mutex_unlock(&vdev->lock);
             int idx = 0;
             for (idx = 0; idx < MAX_NUM_FINGERS; idx++)
@@ -392,8 +396,10 @@ static int fingerprint_remove(struct fingerprint_device *device,
         vdev->listener.state = STATE_IDLE;
         pthread_mutex_unlock(&vdev->lock);
 
-        // Always send remove notice
-        send_remove_notice(vdev, fid);
+        if (ret == 0) {
+            send_remove_notice(vdev, fid);
+        }
+
     }
     pthread_mutex_lock(&vdev->lock);
 
@@ -586,7 +592,7 @@ fingerprint_module_t HAL_MODULE_INFO_SYM = {
         .module_api_version = FINGERPRINT_MODULE_API_VERSION_2_0,
         .hal_api_version    = HARDWARE_HAL_API_VERSION,
         .id                 = FINGERPRINT_HARDWARE_MODULE_ID,
-        .name               = "Exynos5 Fingerprint HAL",
+        .name               = "K3GXX Fingerprint HAL",
         .author             = "ljzyal(ljzyal@gmail.com)",
         .methods            = &fingerprint_module_methods,
     },

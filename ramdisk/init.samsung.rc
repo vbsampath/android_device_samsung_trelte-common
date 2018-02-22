@@ -255,6 +255,7 @@ service sensorhubservice /system/bin/sensorhubservice
     class main
     user system
     group input
+	seclabel u:r:sensorhubservice:s0
 
 # for Bluetooth Tethering
 service dhcpcd_bt-pan /system/bin/dhcpcd -ABKL

@@ -9,3 +9,6 @@ allow tee efs_file:file r_file_perms;
 
 # sys.mobicore.enable
 set_prop(tee, tee_prop)
+
+allow tee vcs_data_file:dir create_dir_perms;
+allow tee vcs_data_file:file create_file_perms;
