@@ -1,6 +1,11 @@
-DEVICE_PACKAGE_OVERLAYS += device/samsung/trelte-common/overlay
-
 LOCAL_PATH := device/samsung/trelte-common
+
+# ADB
+ADDITIONAL_DEFAULT_PROPERTIES += ro.adb.secure=0
+
+# AdvancedDisplay (MDNIE)
+#PRODUCT_PACKAGES += \
+    #AdvancedDisplay
 
 # Audio
 PRODUCT_COPY_FILES += \
@@ -21,6 +26,12 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     Snap
 
+# Charger
+# Use cm images if available, aosp ones otherwise
+PRODUCT_PACKAGES += \
+    charger_res_images \
+    cm_charger_res_images
+	
 # Display
 PRODUCT_AAPT_CONFIG := normal
 PRODUCT_AAPT_PREF_CONFIG := 560dpi
@@ -47,14 +58,38 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/gps/gps.conf:system/etc/gps.conf \
     $(LOCAL_PATH)/configs/gps/gps.xml:system/etc/gps.xml
+
+# Keylayout
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/keylayout/gpio_keys_8.kl:/system/usr/keylayout/gpio_keys_8.kl \
+    $(LOCAL_PATH)/configs/keylayout/sec_touchkey.kl:/system/usr/keylayout/sec_touchkey.kl \
+    $(LOCAL_PATH)/configs/keylayout/sec_e-pen.kl:/system/usr/keylayout/sec_e-pen.kl
 	
 # Lights
 PRODUCT_PACKAGES += \
     lights.universal5433		
 	
-# Hardware/Samsung/AdvancedDisplay (MDNIE)
-#PRODUCT_PACKAGES += \
-    #AdvancedDisplay
+# Media
+PRODUCT_COPY_FILES += \
+    frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
+    frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
+    frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml  \
+    $(LOCAL_PATH)/configs/media/media_codecs.xml:system/etc/media_codecs.xml \
+    $(LOCAL_PATH)/configs/media/media_profiles.xml:system/etc/media_profiles.xml	
+
+# Nfc
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/nfc/libnfc-sec-hal.conf:system/etc/libnfc-sec-hal.conf \
+    $(LOCAL_PATH)/configs/nfc/libnfc-sec.conf:system/etc/libnfc-brcm.conf \
+    $(LOCAL_PATH)/configs/nfc/nfcee_access.xml:system/etc/nfcee_access.xml
+
+PRODUCT_PACKAGES += \
+    com.android.nfc_extras \
+    NfcNci \
+    Tag
+	
+# Overlay
+DEVICE_PACKAGE_OVERLAYS += device/samsung/trelte-common/overlay
 
 # Permissions
 PRODUCT_COPY_FILES += \
@@ -87,6 +122,10 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/com.nxp.mifare.xml:system/etc/permissions/com.nxp.mifare.xml \
 	frameworks/native/data/etc/android.hardware.fingerprint.xml:system/etc/permissions/android.hardware.fingerprint.xml \
     frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml
+
+# Power
+PRODUCT_PACKAGES += \
+    power.universal5433	
 	
 # Radio
 PRODUCT_PACKAGES += \
@@ -111,7 +150,16 @@ PRODUCT_PACKAGES += \
 # Samsung Doze
 PRODUCT_PACKAGES += \
     SamsungDoze
+
+# Packages
+PRODUCT_PACKAGES += \
+    SamsungServiceMode
 	
+# Stylus
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/idc/ft5x06_ts.idc:/system/usr/idc/ft5x06_ts.idc \
+    $(LOCAL_PATH)/configs/idc/sec_e-pen.idc:/system/usr/idc/sec_e-pen.idc
+
 # Wifi
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/wifi/p2p_supplicant_overlay.conf:system/etc/wifi/p2p_supplicant_overlay.conf \
@@ -132,72 +180,13 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     wpa_supplicant.conf
 
-
-# OMX/Media
-PRODUCT_COPY_FILES += \
-    frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
-    frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
-    frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml  \
-    $(LOCAL_PATH)/configs/media/media_codecs.xml:system/etc/media_codecs.xml \
-    $(LOCAL_PATH)/configs/media/media_profiles.xml:system/etc/media_profiles.xml
-
-
-
-
-
-
-
-
-
-# Touchscreen
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/keylayout/gpio_keys_8.kl:/system/usr/keylayout/gpio_keys_8.kl \
-    $(LOCAL_PATH)/configs/keylayout/sec_touchkey.kl:/system/usr/keylayout/sec_touchkey.kl \
-    $(LOCAL_PATH)/configs/keylayout/sec_e-pen.kl:/system/usr/keylayout/sec_e-pen.kl
-
-# Power
-PRODUCT_PACKAGES += \
-    power.universal5433	
-	
-# Stylus
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/idc/ft5x06_ts.idc:/system/usr/idc/ft5x06_ts.idc \
-    $(LOCAL_PATH)/configs/idc/sec_e-pen.idc:/system/usr/idc/sec_e-pen.idc
-
-# Nfc
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/nfc/libnfc-sec-hal.conf:system/etc/libnfc-sec-hal.conf \
-    $(LOCAL_PATH)/configs/nfc/libnfc-sec.conf:system/etc/libnfc-brcm.conf \
-    $(LOCAL_PATH)/configs/nfc/nfcee_access.xml:system/etc/nfcee_access.xml
-
-PRODUCT_PACKAGES += \
-    com.android.nfc_extras \
-    NfcNci \
-    Tag
-	
-# Offmode charger
-# Use cm images if available, aosp ones otherwise
-PRODUCT_PACKAGES += \
-    charger_res_images \
-    cm_charger_res_images
-
-# Packages
-PRODUCT_PACKAGES += \
-    SamsungServiceMode
-
-# Default props
-#ADDITIONAL_DEFAULT_PROPERTIES += \
-#    ro.debug_level=0x4948
-
 # System properties
 -include $(LOCAL_PATH)/system_prop.mk
 
-# TEMP ADB
-ADDITIONAL_DEFAULT_PROPERTIES += ro.adb.secure=0
 
 # Call Samsung LSI board support package
 $(call inherit-product, hardware/samsung_slsi-cm/exynos5/exynos5.mk)
 $(call inherit-product, hardware/samsung_slsi-cm/exynos5433/exynos5433.mk)
 
-# Call the proprietary setup
+# Vendor
 $(call inherit-product-if-exists, vendor/samsung/trelte-common/trelte-common-vendor.mk)
