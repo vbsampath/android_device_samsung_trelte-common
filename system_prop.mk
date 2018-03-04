@@ -17,9 +17,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 #PRODUCT_PROPERTY_OVERRIDES += \
 #    camera2.portability.force_api=1
 
-PRODUCT_PROPERTY_OVERRIDES += \
-    media.stagefright.legacyencoder=1 \
-    media.stagefright.less-secure=1	
+
 	
 # Dalvik/Art
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -36,13 +34,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Graphics
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.bq.gpu_to_cpu_unsupported=1 \
-    ro.opengles.version=196609 \
+    ro.opengles.version=196610 \
     ro.sf.lcd_density=560
-
-# Hwc - not used on cm/aosp
-PRODUCT_PROPERTY_OVERRIDES += \
-    debug.hwc.winupdate=1 \
-    debug.hwc.otf=1
 
 # Hwui
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -60,6 +53,11 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.hwui.text_large_cache_height=2048 \
     ro.hwui.fbo_cache_size=16
 
+# Media
+PRODUCT_PROPERTY_OVERRIDES += \
+    media.stagefright.legacyencoder=1 \
+    media.stagefright.less-secure=1
+	
 # Network
 # Define default initial receive window size in segments.
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -73,4 +71,3 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Wifi
 PRODUCT_PROPERTY_OVERRIDES += \
     wifi.interface=wlan0
-	
