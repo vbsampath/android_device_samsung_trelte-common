@@ -40,8 +40,8 @@ PRODUCT_PACKAGES += \
     validityService	
 
 # Flat device tree for boot image
-#PRODUCT_PACKAGES += \
-#    dtbhtoolExynos
+PRODUCT_PACKAGES += \
+    dtbhtoolExynos
 	
 # Gps
 PRODUCT_PACKAGES += \
