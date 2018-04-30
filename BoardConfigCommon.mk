@@ -65,8 +65,8 @@ BOARD_ANT_WIRELESS_DEVICE := "vfs-prerelease"
 TARGET_AUDIOHAL_VARIANT := samsung
 
 # Samsung Seiren audio
-#BOARD_USE_ALP_AUDIO := true
-#BOARD_USE_SEIREN_AUDIO := true
+BOARD_USE_ALP_AUDIO := true
+BOARD_USE_SEIREN_AUDIO := true
 
 # Bootanimation
 TARGET_BOOTANIMATION_PRELOAD := true
@@ -142,6 +142,8 @@ BOARD_USE_CSC_HW := false
 BOARD_USE_QOS_CTRL := false
 BOARD_USE_S3D_SUPPORT := true
 BOARD_USE_VP8ENC_SUPPORT := true
+BOARD_USE_HEVCDEC_SUPPORT := true
+BOARD_USE_HEVC_HWIP := true
 
 # Video scaling issue workaround
 TARGET_OMX_LEGACY_RESCALING := true
