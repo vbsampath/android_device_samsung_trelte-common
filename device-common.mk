@@ -23,7 +23,8 @@ PRODUCT_PACKAGES += \
 
 # Camera
 PRODUCT_PACKAGES += \
-    camera.universal5433
+    camera.universal5433 \
+    consumerir.universal5433
 
 PRODUCT_PACKAGES += \
     Snap
@@ -182,6 +183,35 @@ PRODUCT_PACKAGES += \
     libwpa_client \
     wpa_supplicant \
 	wpa_supplicant.conf
+
+# Camera
+PRODUCT_PACKAGES += \
+    libcsc \
+    libhwjpeg
+
+# Openmax
+PRODUCT_PACKAGES += \
+	libExynosOMX_Core \
+	libExynosOMX_Resourcemanager 
+
+# OMX audio codecs
+PRODUCT_PACKAGES += \
+	libOMX.Exynos.AAC.Decoder \
+	libOMX.Exynos.FLAC.Decoder \
+	libOMX.Exynos.MP3.Decoder \
+	libOMX.Exynos.WMA.Decoder \
+
+# OMX video codecs
+PRODUCT_PACKAGES += \
+	libOMX.Exynos.AVC.Decoder \
+	libOMX.Exynos.AVC.Encoder \
+	libOMX.Exynos.HEVC.Decoder \
+	libOMX.Exynos.MPEG2.Decoder \
+	libOMX.Exynos.MPEG4.Decoder \
+	libOMX.Exynos.MPEG4.Encoder \
+	libOMX.Exynos.VP8.Decoder \
+	libOMX.Exynos.VP8.Encoder \
+	libOMX.Exynos.WMV.Decoder 
 
 # System properties
 -include $(LOCAL_PATH)/system_prop.mk
