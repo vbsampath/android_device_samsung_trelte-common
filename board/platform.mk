@@ -1,0 +1,9 @@
+# Platform
+TARGET_BOARD_PLATFORM := exynos5
+TARGET_SLSI_VARIANT := cm
+TARGET_SOC := exynos5433
+BOARD_VENDOR := samsung
+
+# Binder
+TARGET_USES_64_BIT_BINDER := true
+

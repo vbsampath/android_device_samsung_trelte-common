@@ -1,0 +1,6 @@
+# RIL
+BOARD_PROVIDES_LIBRIL := true
+TARGET_IGNORE_RO_BOOT_REVISION := true
+
+# RIL.java overwrite
+BOARD_RIL_CLASS := ../../../$(LOCAL_PATH)/ril

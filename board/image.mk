@@ -1,0 +1,4 @@
+# Image
+TARGET_CUSTOM_DTBTOOL := dtbhtoolExynos
+BOARD_KERNEL_SEPARATED_DT := true
+TARGET_NO_RADIOIMAGE := true

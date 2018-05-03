@@ -1,0 +1,7 @@
+# Hardware
+BOARD_HARDWARE_CLASS += $(LOCAL_PATH)/cmhw
+BOARD_HARDWARE_CLASS += hardware/samsung/cmhw
+
+# HWCServices
+BOARD_USES_HWC_SERVICES := true
+SKIP_DISPLAY_BLANK_CTRL := true
