@@ -61,9 +61,6 @@ lib/libhwjpeg.so
 vendor/firmware/setfile_6d1.bin
 vendor/firmware/setfile_imx240.bin
 
-# Bluetooth
-vendor/lib/libbt-vendor.so
-
 # Sensors
 bin/sensorhubservice
 bin/lhd
