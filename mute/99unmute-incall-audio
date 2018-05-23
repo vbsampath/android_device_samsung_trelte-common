@@ -1,0 +1,7 @@
+#!/system/bin/sh
+
+if [ -e /system/bin/unmute-incall-audio ];
+then
+      /system/bin/unmute-incall-audio
+fi;
+
