@@ -1,3 +1,5 @@
+
+# Video nodes
 /dev/mali0                0666   system     system
 /dev/ion                  0666   system     system
 /dev/ump                  0666   system     graphics
@@ -139,5 +141,4 @@
 /dev/mobicore-user        0666   radio     system
 
 # Secure MEM driver
-/dev/s5p-smem             0660   system     system
-
+/dev/s5p-smem             0660   system     mediadrm
