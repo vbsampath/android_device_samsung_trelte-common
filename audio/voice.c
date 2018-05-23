@@ -15,7 +15,7 @@
  */
 
 #define LOG_TAG "audio_hw_voice"
-#define LOG_NDEBUG 0
+//#define LOG_NDEBUG 0
 /*#define VERY_VERY_VERBOSE_LOGGING*/
 #ifdef VERY_VERY_VERBOSE_LOGGING
 #define ALOGVV ALOGV
@@ -443,6 +443,7 @@ struct voice_session *voice_session_init(struct audio_device *adev)
         ALOGV("%s: Forcing voice config: %s", __func__, voice_config);
     } else {
         if (RIL_UNSOL_SNDMGR_WB_AMR_REPORT > 0) {
+			session->wb_amr_type = 1;
             /* register callback for wideband AMR setting */
             ret = ril_set_wb_amr_callback(&session->ril,
                                           voice_session_wb_amr_callback,
