@@ -5,4 +5,4 @@ BOARD_CHARGER_SHOW_PERCENTAGE := true
 CHARGING_ENABLED_PATH := /sys/class/power_supply/battery/batt_lp_charging
 
 # Power
-TARGET_POWERHAL_VARIANT := samsung
+TARGET_POWERHAL_VARIANT := samsungnote4

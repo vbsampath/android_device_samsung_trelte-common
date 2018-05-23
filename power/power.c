@@ -29,8 +29,8 @@
 
 #include <sys/types.h>
 
-#define LOG_TAG "SamsungPowerHAL"
-/* #define LOG_NDEBUG 0 */
+#define LOG_TAG "SamsungNote4PowerHAL"
+//#define LOG_NDEBUG 0 
 #include <utils/Log.h>
 
 #include <hardware/hardware.h>
@@ -55,7 +55,6 @@
 struct samsung_power_module {
     struct power_module base;
     pthread_mutex_t lock;
-    int boost_fd;
     int boostpulse_fd;
     char hispeed_freqs[CLUSTER_COUNT][PARAM_MAXLEN];
     char max_freqs[CLUSTER_COUNT][PARAM_MAXLEN];
@@ -71,6 +70,7 @@ enum power_profile_e {
 };
 
 static enum power_profile_e current_power_profile = PROFILE_BALANCED;
+
 
 /**********************************************************
  *** HELPER FUNCTIONS
@@ -120,7 +120,11 @@ static void sysfs_write(const char *path, char *s)
     fd = open(path, O_WRONLY);
     if (fd < 0) {
         strerror_r(errno, errno_str, sizeof(errno_str));
-        ALOGE("Error opening %s: %s", path, errno_str);
+        /* 
+         * Don't log an error as it's almost certainly one of the big cluster
+         * sysfs nodes that has shut down
+         */
+        ALOGV("Error opening %s: %s", path, errno_str);
         return;
     }
 
@@ -149,6 +153,7 @@ static void cpu_sysfs_write(const char *param, char s[CLUSTER_COUNT][PARAM_MAXLE
 
     for (unsigned int i = 0; i < ARRAY_SIZE(CPU_SYSFS_PATHS); i++) {
         sprintf(path, "%s%s", CPU_SYSFS_PATHS[i], param);
+        ALOGV("%s writing %s to %s", __func__, s[i], path);
         sysfs_write(path, s[i]);
     }
 }
@@ -173,36 +178,88 @@ static void cpu_interactive_write(const char *param, char s[CLUSTER_COUNT][PARAM
     }
 }
 
-static void send_boost(int boost_fd, int32_t duration_us)
+/**********************************************************
+ *** BOOST FUNCTIONS
+ **********************************************************/
+
+static int boostpulse_open(struct samsung_power_module *samsung_pwr)
 {
-    int len;
+    char path[PATH_MAX];
+    int fd = -1;
 
-    if (boost_fd < 0) {
-        return;
+    if (samsung_pwr == (struct samsung_power_module *)NULL) {
+        return -1;
     }
 
-    len = write(boost_fd, "1", 1);
-    if (len < 0) {
-        ALOGE("Error writing to %s%s: %s", CPU_INTERACTIVE_PATHS[0], BOOST_PATH, strerror(errno));
-        return;
-    }
+    pthread_mutex_lock(&samsung_pwr->lock);
+    fd = samsung_pwr->boostpulse_fd;
+    sprintf(path, "%s%s", CPU_INTERACTIVE_PATHS[0], BOOSTPULSE_PATH);
 
-    usleep(duration_us);
-    len = write(boost_fd, "0", 1);
+    ALOGV("%s fd = %d\n", __func__, fd);
+
+    if (fd < 0) {
+        ALOGV("Opening %s\n", path);
+        if ((fd = open(path, O_WRONLY)) < 0) {
+            ALOGV("Error opening %s: %s\n", path, strerror(errno));
+        }
+    } 
+
+    samsung_pwr->boostpulse_fd = fd;
+    pthread_mutex_unlock(&samsung_pwr->lock);
+    return fd;
 }
 
-static void send_boostpulse(int boostpulse_fd)
+static void send_boostpulse(struct samsung_power_module *samsung_pwr)
 {
-    int len;
+    int len, fd;
 
-    if (boostpulse_fd < 0) {
+    if (samsung_pwr == (struct samsung_power_module *)NULL) {
         return;
     }
 
-    len = write(boostpulse_fd, "1", 1);
+    ALOGV("%s", __func__);
+
+    if ((fd = boostpulse_open(samsung_pwr)) < 0) {
+        ALOGE("file descriptor invalid for %s%s", CPU_INTERACTIVE_PATHS[0], BOOSTPULSE_PATH);
+        return;
+    }
+    len = write(fd, "1", 1);
     if (len < 0) {
-        ALOGE("Error writing to %s%s: %s", CPU_INTERACTIVE_PATHS[0], BOOSTPULSE_PATH,
-                strerror(errno));
+        ALOGE("Error writing to %s%s: %s (%d)", CPU_INTERACTIVE_PATHS[0], BOOSTPULSE_PATH, strerror(errno), fd);
+    }
+}
+
+static int boost_open(unsigned int cpu)
+{
+    char path[PATH_MAX];
+    int fd = -1;
+
+    if (cpu < ARRAY_SIZE(CPU_INTERACTIVE_PATHS)) {
+        sprintf(path, "%s%s", CPU_INTERACTIVE_PATHS[cpu], BOOST_PATH);
+        if ((fd = open(path, O_WRONLY)) < 0) {
+            ALOGE("Error opening %s: %s\n", path, strerror(errno));
+        }
+        ALOGV("%s opened %s", __func__, path);
+    }
+    return fd;
+}
+
+static void send_boost(char *onoff)
+{
+    int len, fd = -1;
+
+    ALOGV("%s", __func__);
+    for (unsigned int i = 0; i < ARRAY_SIZE(CPU_INTERACTIVE_PATHS); i++) {
+
+        if ((fd = boost_open(i)) < 0) {
+            ALOGE("file descriptor invalid for %s%s", CPU_INTERACTIVE_PATHS[i], BOOST_PATH);
+            break;
+        }
+        len = write(fd, onoff, 1);
+        if (len < 0) {
+            ALOGE("Error writing to %s%s: %s", CPU_INTERACTIVE_PATHS[i], BOOST_PATH, strerror(errno));
+        }
+        close(fd);
     }
 }
 
@@ -227,20 +284,32 @@ static void set_power_profile(struct samsung_power_module *samsung_pwr,
 
     switch (profile) {
         case PROFILE_POWER_SAVE:
-            // Grab value set by init.*.rc
+            // Grab value set by init scripts
             cpu_interactive_read(HISPEED_FREQ_PATH, samsung_pwr->hispeed_freqs);
+            // Reread max scaling freqs in case they've been changed by the user
+            cpu_sysfs_read(MAX_FREQ_PATH, samsung_pwr->max_freqs);
             // Limit to hispeed freq
             cpu_sysfs_write(MAX_FREQ_PATH, samsung_pwr->hispeed_freqs);
+            // Turn off boost if it was set
+            send_boost("0");
             ALOGV("%s: set powersave mode", __func__);
             break;
         case PROFILE_BALANCED:
             // Restore normal max freq
-            cpu_sysfs_write(MAX_FREQ_PATH, samsung_pwr->max_freqs);
+            if (current_power_profile == PROFILE_POWER_SAVE) {
+                cpu_sysfs_write(MAX_FREQ_PATH, samsung_pwr->max_freqs);
+            }
+            // Turn off boost if it was set
+            send_boost("0");
             ALOGV("%s: set balanced mode", __func__);
             break;
         case PROFILE_HIGH_PERFORMANCE:
             // Restore normal max freq
-            cpu_sysfs_write(MAX_FREQ_PATH, samsung_pwr->max_freqs);
+            if (current_power_profile == PROFILE_POWER_SAVE) {
+                cpu_sysfs_write(MAX_FREQ_PATH, samsung_pwr->max_freqs);
+            }
+            // Turn on boost
+            send_boost("1");
             ALOGV("%s: set performance mode", __func__);
             break;
         default:
@@ -340,41 +409,16 @@ static void init_touch_input_power_path(struct samsung_power_module *samsung_pwr
     }
 }
 
-static void boost_open(struct samsung_power_module *samsung_pwr)
-{
-    char path[PATH_MAX];
-
-    // the boost node is only valid for the LITTLE cluster
-    sprintf(path, "%s%s", CPU_INTERACTIVE_PATHS[0], BOOST_PATH);
-
-    samsung_pwr->boost_fd = open(path, O_WRONLY);
-    if (samsung_pwr->boost_fd < 0) {
-        ALOGE("Error opening %s: %s\n", path, strerror(errno));
-    }
-}
-
-static void boostpulse_open(struct samsung_power_module *samsung_pwr)
-{
-    char path[PATH_MAX];
-
-    // the boostpulse node is only valid for the LITTLE cluster
-    sprintf(path, "%s%s", CPU_INTERACTIVE_PATHS[0], BOOSTPULSE_PATH);
-
-    samsung_pwr->boostpulse_fd = open(path, O_WRONLY);
-    if (samsung_pwr->boostpulse_fd < 0) {
-        ALOGE("Error opening %s: %s\n", path, strerror(errno));
-    }
-}
-
 static void samsung_power_init(struct power_module *module)
 {
     struct samsung_power_module *samsung_pwr = (struct samsung_power_module *) module;
 
-    init_cpufreqs(samsung_pwr);
+    if (samsung_pwr == (struct samsung_power_module *)NULL) {
+        ALOGE("%s power_module parameter is a NULL pointer", __func__);
+        return;
+    }
 
-    // keep interactive boost fds opened
-    boost_open(samsung_pwr);
-    boostpulse_open(samsung_pwr);
+    init_cpufreqs(samsung_pwr);
 
     samsung_pwr->touchscreen_power_path = NULL;
     samsung_pwr->touchkey_power_path = NULL;
@@ -394,7 +438,6 @@ static void samsung_power_init(struct power_module *module)
                 samsung_pwr->hispeed_freqs[i]);
     }
     ALOGI("%s", hispeed_freqs);
-    ALOGI("boostpulse_fd: %d", samsung_pwr->boostpulse_fd);
     ALOGI("touchscreen_power_path: %s",
             samsung_pwr->touchscreen_power_path ? samsung_pwr->touchscreen_power_path : "NULL");
     ALOGI("touchkey_power_path: %s",
@@ -467,6 +510,7 @@ static void samsung_power_set_interactive(struct power_module *module, int on)
     }
 
 out:
+
     cpu_interactive_write(IO_IS_BUSY_PATH, on ? ON : OFF);
 
     ALOGV("power_set_interactive: %d done", on);
@@ -476,6 +520,7 @@ static void samsung_power_hint(struct power_module *module,
                                   power_hint_t hint,
                                   void *data)
 {
+    int profile = 0;
     struct samsung_power_module *samsung_pwr = (struct samsung_power_module *) module;
 
     /* Bail out if low-power mode is active */
@@ -487,11 +532,10 @@ static void samsung_power_hint(struct power_module *module,
 
     switch (hint) {
         case POWER_HINT_VSYNC:
-            ALOGV("%s: POWER_HINT_VSYNC", __func__);
             break;
         case POWER_HINT_INTERACTION:
             ALOGV("%s: POWER_HINT_INTERACTION", __func__);
-            send_boostpulse(samsung_pwr->boostpulse_fd);
+            send_boostpulse(samsung_pwr);
             break;
         case POWER_HINT_LOW_POWER:
             ALOGV("%s: POWER_HINT_LOW_POWER", __func__);
@@ -499,21 +543,21 @@ static void samsung_power_hint(struct power_module *module,
             break;
         case POWER_HINT_LAUNCH:
             ALOGV("%s: POWER_HINT_LAUNCH", __func__);
-            send_boostpulse(samsung_pwr->boostpulse_fd);
-            break;
-        case POWER_HINT_CPU_BOOST:
-            ALOGV("%s: POWER_HINT_CPU_BOOST", __func__);
-            int32_t duration_us = *((int32_t *)data);
-            send_boost(samsung_pwr->boost_fd, duration_us);
+            // ignore the hint duration and use the governor setting 
+            // int32_t duration_us = *((int32_t *)data);
+            send_boostpulse(samsung_pwr);
             break;
         case POWER_HINT_SET_PROFILE:
-            ALOGV("%s: POWER_HINT_SET_PROFILE", __func__);
-            int profile = *((intptr_t *)data);
+            profile = *((intptr_t *)data);
+            ALOGV("%s: POWER_HINT_SET_PROFILE %d", __func__, profile);
             set_power_profile(samsung_pwr, profile);
             break;
         case POWER_HINT_DISABLE_TOUCH:
             ALOGV("%s: POWER_HINT_DISABLE_TOUCH", __func__);
             sysfs_write(samsung_pwr->touchscreen_power_path, data ? "0" : "1");
+            break;
+        case POWER_HINT_SUSTAINED_PERFORMANCE:
+            ALOGV("%s: POWER_HINT_SUSTAINED_PERFORMANCE", __func__);
             break;
         default:
             ALOGW("%s: Unknown power hint: %d", __func__, hint);
@@ -558,7 +602,7 @@ struct samsung_power_module HAL_MODULE_INFO_SYM = {
             .module_api_version = POWER_MODULE_API_VERSION_0_2,
             .hal_api_version = HARDWARE_HAL_API_VERSION,
             .id = POWER_HARDWARE_MODULE_ID,
-            .name = "Samsung Power HAL",
+            .name = "Samsung Note4 Power HAL",
             .author = "The LineageOS Project",
             .methods = &power_module_methods,
         },
@@ -571,5 +615,5 @@ struct samsung_power_module HAL_MODULE_INFO_SYM = {
     },
 
     .lock = PTHREAD_MUTEX_INITIALIZER,
-    .boostpulse_fd = -1,
+    .boostpulse_fd = -1
 };

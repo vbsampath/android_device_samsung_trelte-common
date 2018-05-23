@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ifeq ($(TARGET_POWERHAL_VARIANT),samsung)
+ifeq ($(TARGET_POWERHAL_VARIANT),samsungnote4)
 
 LOCAL_PATH := $(call my-dir)
 
