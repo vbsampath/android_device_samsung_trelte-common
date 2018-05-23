@@ -1,0 +1,6 @@
+#!/system/bin/sh
+
+# Tell the kernel where to find the hotplug helper
+# Uncomment the line below to enable hotpluggin scripts
+
+# echo "/system/bin/hotplug" > /proc/sys/kernel/hotplug

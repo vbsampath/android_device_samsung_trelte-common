@@ -1,0 +1,13 @@
+#!/system/bin/sh
+# ACTION=[online or offline]
+# DEVPATH=[sysfs node or device]
+
+# Example hotlugging script to take action on a CPU hotplug event
+
+[[ $1 != "cpu" ]] && exit 0
+
+[[ $ACTION == "offline" ]] && exit 0
+
+# Do some action here
+
+exit 0
