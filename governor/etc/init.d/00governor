@@ -1,0 +1,59 @@
+#!/system/bin/sh
+
+CONF="/system/etc/governor/governor.conf"
+BASE="/sys/devices/system/cpu/"
+
+# Strip comments and white space/blank lines
+INPUT=$(cat $CONF |  sed -e '/\s*#.*$/d' -e '/^\s*$/d')
+
+function process_conf_file ()
+{
+
+    while read line; do
+
+        # remove newlines
+        line=${line%$NL}
+
+        # tokenize to an array
+        tokens=( $line )
+
+        # count elements
+        elements=${#tokens[*]}
+        elements=$((elements - 1))
+
+        # get path to sysfs node
+        key=${tokens[0]}
+        val=""
+
+        # concatenate values to a single string
+        for i in $(seq 1 1 $elements); do
+
+            val=$val${tokens[$i]}
+            [[ i -ne $elements ]] && val=$val" "
+
+        done
+
+        cmd="echo \"$val\" > $BASE$key"
+        /system/bin/sh -c "$cmd"
+
+    done <<< $INPUT
+
+}
+
+if [[ ! -e $CONF ]]; then
+    exit 1
+fi
+
+# wake up CPUs - this should not be necessary during the boot process
+# but if you want to run the script by hand and the screen is off then
+# you will need to uncomment the next three lines
+
+#echo 1 > /sys/devices/system/cpu/cpu0/online
+#echo 1 > /sys/devices/system/cpu/cpu4/online
+
+# Wait a few seconds for them to wake up
+#sleep 3
+
+# Write the configured values to the interactive governor sysfs
+# and to the /system/etc/governor mirror
+process_conf_file

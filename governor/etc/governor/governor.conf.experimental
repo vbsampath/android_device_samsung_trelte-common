@@ -1,0 +1,37 @@
+cpu0/cpufreq/scaling_max_freq                   1300000
+cpu0/cpufreq/scaling_min_freq                   400000
+cpu0/cpufreq/interactive/min_sample_time        80000
+cpu0/cpufreq/interactive/target_loads           75
+cpu0/cpufreq/interactive/multi_enter_load       800
+cpu0/cpufreq/interactive/multi_enter_time       80000
+cpu0/cpufreq/interactive/timer_slack            20000
+cpu0/cpufreq/interactive/hispeed_freq           900000
+cpu0/cpufreq/interactive/timer_rate             20000
+cpu0/cpufreq/interactive/above_hispeed_delay    20000
+cpu0/cpufreq/interactive/multi_exit_load        360
+cpu0/cpufreq/interactive/multi_exit_time        320000
+cpu0/cpufreq/interactive/single_enter_load      200
+cpu0/cpufreq/interactive/single_enter_time      160000
+cpu0/cpufreq/interactive/go_hispeed_load        85
+cpu0/cpufreq/interactive/single_exit_load       90
+cpu0/cpufreq/interactive/single_exit_time       80000
+
+
+cpu4/cpufreq/scaling_max_freq                   1700000
+cpu4/cpufreq/scaling_min_freq                   700000
+cpu4/cpufreq/interactive/min_sample_time        80000
+cpu4/cpufreq/interactive/target_loads           80 900000:85 1200000:87 1400000:90 1700000:95
+cpu4/cpufreq/interactive/multi_enter_load       360
+cpu4/cpufreq/interactive/multi_enter_time       99000
+cpu4/cpufreq/interactive/timer_slack            20000
+cpu4/cpufreq/interactive/hispeed_freq           900000
+cpu4/cpufreq/interactive/timer_rate             20000
+cpu4/cpufreq/interactive/above_hispeed_delay    20000 1200000:20000 1400000:60000 1700000:120000
+cpu4/cpufreq/interactive/multi_exit_load        240
+cpu4/cpufreq/interactive/multi_exit_time        299000
+cpu4/cpufreq/interactive/single_enter_load      95
+cpu4/cpufreq/interactive/single_enter_time      199000
+cpu4/cpufreq/interactive/go_hispeed_load        80
+cpu4/cpufreq/interactive/single_exit_load       60
+cpu4/cpufreq/interactive/single_exit_time       99000
+
