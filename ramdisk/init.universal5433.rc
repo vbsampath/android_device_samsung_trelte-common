@@ -247,6 +247,15 @@ on boot
     chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
     chmod 0660 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
 
+
+    # Wait for up to 5 seconds - the CPU big cluster is slow to come online
+    # Permission settings below fail to take effect unless we wait for
+    # the CPU to wake up as sysfs entries are not created
+    # In reality, the cluster should be online as the screen is on during the boot
+    # process and therefore the call will return immediately
+
+    wait /sys/devices/system/cpu/cpu4/cpufreq/interactive/timer_rate 
+
     chown system system /sys/devices/system/cpu/cpu4/cpufreq/interactive/timer_rate
     chmod 0660 /sys/devices/system/cpu/cpu4/cpufreq/interactive/timer_rate
     chown system system /sys/devices/system/cpu/cpu4/cpufreq/interactive/timer_slack
