@@ -43,7 +43,9 @@
 #define BOOSTPULSE_PATH   "/boostpulse"
 
 #define IO_IS_BUSY_PATH   "/io_is_busy"
-#define HISPEED_FREQ_PATH "/hispeed_freq"
+
+#define PSAVE_FREQ_LITTLE "1000000"
+#define PSAVE_FREQ_BIG    "1400000"
 
 #define MAX_FREQ_PATH     "/cpufreq/scaling_max_freq"
 
@@ -56,8 +58,8 @@ struct samsung_power_module {
     struct power_module base;
     pthread_mutex_t lock;
     int boostpulse_fd;
-    char hispeed_freqs[CLUSTER_COUNT][PARAM_MAXLEN];
     char max_freqs[CLUSTER_COUNT][PARAM_MAXLEN];
+    char psave_freqs[CLUSTER_COUNT][PARAM_MAXLEN];
     char* touchscreen_power_path;
     char* touchkey_power_path;
 };
@@ -284,12 +286,10 @@ static void set_power_profile(struct samsung_power_module *samsung_pwr,
 
     switch (profile) {
         case PROFILE_POWER_SAVE:
-            // Grab value set by init scripts
-            cpu_interactive_read(HISPEED_FREQ_PATH, samsung_pwr->hispeed_freqs);
             // Reread max scaling freqs in case they've been changed by the user
             cpu_sysfs_read(MAX_FREQ_PATH, samsung_pwr->max_freqs);
-            // Limit to hispeed freq
-            cpu_sysfs_write(MAX_FREQ_PATH, samsung_pwr->hispeed_freqs);
+            // Limit to psave freq
+            cpu_sysfs_write(MAX_FREQ_PATH, samsung_pwr->psave_freqs);
             // Turn off boost if it was set
             send_boost("0");
             ALOGV("%s: set powersave mode", __func__);
@@ -394,8 +394,13 @@ static void find_input_nodes(struct samsung_power_module *samsung_pwr, char *dir
 
 static void init_cpufreqs(struct samsung_power_module *samsung_pwr)
 {
-    cpu_interactive_read(HISPEED_FREQ_PATH, samsung_pwr->hispeed_freqs);
+    if (samsung_pwr == (struct samsung_power_module *)NULL) {
+        return;
+    }
     cpu_sysfs_read(MAX_FREQ_PATH, samsung_pwr->max_freqs);
+    strncpy(samsung_pwr->psave_freqs[0], PSAVE_FREQ_LITTLE, PARAM_MAXLEN);
+    strncpy(samsung_pwr->psave_freqs[1], PSAVE_FREQ_BIG, PARAM_MAXLEN);
+
 }
 
 static void init_touch_input_power_path(struct samsung_power_module *samsung_pwr)
@@ -431,13 +436,6 @@ static void samsung_power_init(struct power_module *module)
         sprintf(max_freqs, "%s, %s[%d]: %s", max_freqs, "cluster", i, samsung_pwr->max_freqs[i]);
     }
     ALOGI("%s", max_freqs);
-    char hispeed_freqs[PATH_MAX];
-    sprintf(hispeed_freqs, "hispeed_freqs: cluster[0]: %s", samsung_pwr->hispeed_freqs[0]);
-    for (unsigned int i = 1; i < CLUSTER_COUNT; i++) {
-        sprintf(hispeed_freqs, "%s, %s[%d]: %s", hispeed_freqs, "cluster", i,
-                samsung_pwr->hispeed_freqs[i]);
-    }
-    ALOGI("%s", hispeed_freqs);
     ALOGI("touchscreen_power_path: %s",
             samsung_pwr->touchscreen_power_path ? samsung_pwr->touchscreen_power_path : "NULL");
     ALOGI("touchkey_power_path: %s",
@@ -615,5 +613,5 @@ struct samsung_power_module HAL_MODULE_INFO_SYM = {
     },
 
     .lock = PTHREAD_MUTEX_INITIALIZER,
-    .boostpulse_fd = -1
+    .boostpulse_fd = -1,
 };
