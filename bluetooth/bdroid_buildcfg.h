@@ -17,6 +17,20 @@
 #ifndef _BDROID_BUILDCFG_H
 #define _BDROID_BUILDCFG_H
 
-#define BTM_DEF_LOCAL_NAME "Galaxy Note 4"
+#define BTM_DEF_LOCAL_NAME "Samsung Galaxy Note 4"
+
+#define BTA_DISABLE_DELAY 1000 /* in milliseconds */
+
+/* Wideband support */
+#define BTM_WBS_INCLUDED TRUE
+#define BTIF_HF_WBS_PREFERRED TRUE
+
+/* Logging */
+/*
+#define BTA_AG_SCO_DEBUG TRUE
+#define BT_USE_TRACES TRUE
+#define BT_TRACE_VERBOSE TRUE
+#define DEFAULT_CONF_TRACE_LEVEL BT_TRACE_LEVEL_DEBUG
+*/
 
 #endif
