@@ -12,6 +12,7 @@ on boot
     write /sys/devices/system/cpu/cpu0/cpufreq/interactive/above_hispeed_delay 19000
     write /sys/devices/system/cpu/cpu0/cpufreq/interactive/boostpulse_duration 40000
 
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 1700000
     write /sys/devices/system/cpu/cpu4/cpufreq/interactive/multi_enter_load 360
     write /sys/devices/system/cpu/cpu4/cpufreq/interactive/multi_enter_time 99000
     write /sys/devices/system/cpu/cpu4/cpufreq/interactive/multi_exit_load 240
@@ -27,7 +28,7 @@ on boot
     write /sys/devices/system/cpu/cpu4/cpufreq/interactive/hispeed_freq 1000000
     write /sys/devices/system/cpu/cpu4/cpufreq/interactive/go_hispeed_load 89
     write /sys/devices/system/cpu/cpu4/cpufreq/interactive/target_loads "80 1000000:81 1400000:87 1700000:90"
-    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/above_hispeed_delay "59000 1200000:119000 1700000:19000"
+    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/above_hispeed_delay "20000 1200000:119000 1700000:19000"
     write /sys/devices/system/cpu/cpu4/cpufreq/interactive/boostpulse_duration 40000
 
     # param_index = 1
