@@ -68,6 +68,7 @@ etc/lhd.conf
 etc/sec_s3fwrn5_rfreg.bin
 lib/libsensorhub.so
 lib/libsensorhubservice.so
+lib/libhr.so
 lib/hw/consumerir.exynos5.so
 lib/hw/nfc_nci.universal5433.so
 lib/hw/sensorhubs.universal5433.so
