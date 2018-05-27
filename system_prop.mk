@@ -9,9 +9,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.bt.bdaddr_path="/efs/bluetooth/bt_addr"
 
-PRODUCT_PROPERTY_OVERRIDES += \
-    qcom.bluetooth.soc=rome
-
 # Camera
 #PRODUCT_PROPERTY_OVERRIDES += \
 #    camera2.portability.force_api=1
