@@ -1,5 +1,5 @@
 # Audio HAL variant
-TARGET_AUDIOHAL_VARIANT := samsung
+TARGET_AUDIOHAL_VARIANT := samsungnote4
 
 # Samsung Seiren audio
 BOARD_USE_ALP_AUDIO := true
