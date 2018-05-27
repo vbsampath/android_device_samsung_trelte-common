@@ -75,3 +75,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
 	media.sf.omx-plugin=libffmpeg_omx.so,libsomxcore.so 
 
+# Miracast build properties 
+PRODUCT_PROPERTY_OVERRIDES += \
+	net.tethering.noprovisioning=true \
+	ro.hdmi.enable=true \
+	ro.hdmi.mirror.enable=true \
