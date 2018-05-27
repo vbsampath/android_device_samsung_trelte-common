@@ -9,3 +9,10 @@ PRODUCT_PACKAGES += \
 # OMX FLAC Decoder
 PRODUCT_PACKAGES += \
     libOMX.Exynos.FLAC.Decoder
+
+# Tinyalsa utilities
+PRODUCT_PACKAGES += \
+    tinyplay \
+    tinycap \
+    tinymix \
+    tinypcminfo
