@@ -6,10 +6,6 @@ PRODUCT_PACKAGES += \
     audio.primary.universal5433 \
     libtinycompress
 
-# OMX FLAC Decoder
-PRODUCT_PACKAGES += \
-    libOMX.Exynos.FLAC.Decoder
-
 # Tinyalsa utilities
 PRODUCT_PACKAGES += \
     tinyplay \
