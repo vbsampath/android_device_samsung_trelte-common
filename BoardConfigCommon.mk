@@ -9,6 +9,8 @@ TARGET_SLSI_VARIANT := cm
 TARGET_SOC := exynos5433
 BOARD_VENDOR := samsung
 
+BOARD_KERNEL_CMDLINE := selinux=0
+
 # Binder
 TARGET_USES_64_BIT_BINDER := true
 
