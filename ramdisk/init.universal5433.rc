@@ -645,12 +645,12 @@ service argos-daemon /system/bin/argosd
     group system radio
 
 # SecEDS
-service TvoutService_C /system/bin/bintvoutservice
-    class main
-    user system
-    group graphics
-on property:ro.SecEDS.enable=false
-    stop TvoutService_C
+#edp17 service TvoutService_C /system/bin/bintvoutservice
+#edp17     class main
+#edp17     user system
+#edp17     group graphics
+#edp17 on property:ro.SecEDS.enable=false
+#edp17     stop TvoutService_C
 
 # Set watchdog timer to 30 seconds and pet it every 10 seconds to get a 20 second margin
 service watchdogd /sbin/watchdogd 10 20
