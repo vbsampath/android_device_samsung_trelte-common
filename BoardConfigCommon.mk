@@ -10,6 +10,7 @@ TARGET_SOC := exynos5433
 BOARD_VENDOR := samsung
 
 BOARD_KERNEL_CMDLINE := selinux=0
+BOARD_KERNEL_CMDLINE += console=tty0
 
 # Binder
 TARGET_USES_64_BIT_BINDER := true
